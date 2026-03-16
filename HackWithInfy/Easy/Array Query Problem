@@ -1,0 +1,77 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+/*
+Constraints:
+1 <= n <= 10^5
+1 <= A[i] <= 10^5
+1 <= q <= 10^5
+0 <= l,r <= 10^5
+
+Because:
+(i-l+1) * A[l] can be as large as:
+10^5 * 10^5 = 10^10
+
+10^10 > INT_MAX (≈2*10^9)
+
+So we use long long to avoid overflow.
+
+Also the problem asks to return answer modulo 10^9+7,
+so we apply %MOD whenever we update or add values.
+*/
+
+const long long MOD = 1000000007;
+
+int main(){
+
+    int n;
+    cin >> n;
+
+    // long long used because values may reach up to 10^10
+    vector<long long> a(n);
+
+    for(int i=0;i<n;i++){
+        cin >> a[i];
+    }
+
+    int qn;
+    cin >> qn;
+
+    // sum can become very large after many queries
+    long long sum = 0;
+
+    while(qn--){
+
+        int t,l,r;
+        cin >> t >> l >> r;
+
+        if(t == 1){
+
+            // store original A[l]
+            long long base = a[l];
+
+            for(int i=l;i<=r;i++){
+
+                // multiplication done in long long
+                // modulo applied to keep value within limits
+                a[i] = ((long long)(i-l+1) * base) % MOD;
+
+            }
+
+        }else{
+
+            for(int i=l;i<=r;i++){
+
+                // sum kept under MOD to avoid overflow
+                sum = (sum + a[i]) % MOD;
+
+            }
+
+        }
+    }
+
+    // final answer also printed modulo 1e9+7
+    cout << sum % MOD;
+
+    return 0;
+}
