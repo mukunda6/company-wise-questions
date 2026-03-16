@@ -1,0 +1,115 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+/*
+Problem Constraints:
+
+1 <= N <= 10^5          // Size of array
+1 <= K <= N             // Maximum distinct elements allowed in subarray
+-10^5 <= A[i] <= 10^5   // Array values can be negative or positive
+
+Goal:
+Find the maximum sum of a subarray where the number of distinct elements <= K.
+Empty subarray is allowed → minimum answer = 0.
+
+Why we use long long:
+Worst case sum:
+N * max(A[i]) = 10^5 * 10^5 = 10^10
+
+10^10 > INT_MAX (≈ 2 * 10^9)
+
+So using int would overflow.
+long long supports up to ≈ 9 * 10^18.
+*/
+
+int main(){
+
+    int n;
+    cin >> n;   // read number of elements
+
+    int k;
+    cin >> k;   // maximum allowed distinct elements
+
+    vector<long long> a(n);  
+    // long long used because values may contribute to large sums
+
+    for(int i=0;i<n;i++){
+        cin >> a[i];  // input array elements
+    }
+
+    unordered_map<long long,int> m;
+    /*
+    Hashmap to store frequency of elements in current window
+
+    Example:
+    Window = [2,2,3,2,3]
+
+    Map:
+    2 → 3
+    3 → 2
+
+    Distinct elements = map.size()
+    */
+
+    long long currsum = 0;   // sum of current sliding window
+    long long maxsum = 0;    // maximum valid subarray sum
+
+    int left = 0;            // left pointer of sliding window
+
+    /*
+    Sliding Window Technique
+
+    right pointer expands window
+    left pointer shrinks window when distinct elements exceed k
+    */
+
+    for(int right=0; right<n; right++){
+
+        currsum += a[right];   // include new element in window
+        m[a[right]]++;         // increase frequency in hashmap
+
+        /*
+        If distinct elements exceed k,
+        shrink window from left side
+        */
+
+        while(m.size() > k){
+
+            m[a[left]]--;        // reduce frequency of left element
+            currsum -= a[left];  // remove it from current sum
+
+            if(m[a[left]] == 0){
+                m.erase(a[left]); // remove element from map
+            }
+
+            left++;  // move window forward
+        }
+
+        // update maximum sum of valid window
+        maxsum = max(maxsum, currsum);
+    }
+
+    cout << maxsum;   // output result
+
+    return 0;
+}
+
+/*
+Time Complexity:
+
+Each element enters window once
+Each element leaves window once
+
+Total operations ≈ 2 * N
+
+Time Complexity = O(N)
+
+Hashmap operations are O(1) average.
+
+Space Complexity:
+
+Array storage = O(N)
+Hashmap storage = O(K)
+
+Total Space Complexity = O(N + K)
+*/
