@@ -1,0 +1,49 @@
+#include<bits/stdc++.h>
+using namespace std;
+
+/*
+Constraints:
+1 ≤ N ≤ 10^5
+1 ≤ C ≤ 10^5
+A[i] ∈ {-1, 1}
+
+Goal:
+Find minimum initial oil X that minimizes disturbances.
+
+Idea:
+Track prefix sum of tank changes and ensure it never becomes negative.
+*/
+
+int main(){
+
+    int N;
+    cin >> N;
+
+    int C;
+    cin >> C;
+
+    vector<int> A(N);
+
+    for(int i=0;i<N;i++){
+        cin >> A[i];
+    }
+
+    int prefix = 0;
+    int minPrefix = 0;
+
+    // simulate tank change without initial oil
+    for(int i=0;i<N;i++){
+        prefix += A[i];
+        minPrefix = min(minPrefix, prefix);
+    }
+
+    // minimum oil needed so tank never becomes negative
+    int X = max(0, -minPrefix);
+
+    // cannot exceed capacity
+    X = min(X, C);
+
+    cout << X;
+
+    return 0;
+}
