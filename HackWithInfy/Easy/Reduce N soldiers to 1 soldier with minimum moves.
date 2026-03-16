@@ -1,0 +1,130 @@
+ @ 2 approches dowm
+#include<bits/stdc++.h>
+using namespace std;
+
+/*
+Problem
+-------
+Reduce N soldiers to 1 soldier with minimum moves.
+
+Operations
+----------
+1) n → n - 1
+2) n → ceil(n/2)
+3) n → ceil(n/3)
+
+Constraints
+-----------
+1 ≤ N ≤ 10^9
+
+Brute Force Idea
+----------------
+Try all operations recursively and take minimum moves.
+*/
+
+long long brute(long long n){
+
+    if(n <= 1)
+        return 0;
+
+    long long op1 = 1 + brute(n - 1);
+    long long op2 = 1 + brute((n + 1) / 2);
+    long long op3 = 1 + brute((n + 2) / 3);
+
+    return min({op1, op2, op3});
+}
+
+int main(){
+
+    long long n;
+    cin >> n;
+
+    cout << brute(n);
+
+}
+
+
+
+
+
+#include<bits/stdc++.h>
+using namespace std;
+
+/*
+Problem
+-------
+Reduce N soldiers to 1 soldier with minimum moves.
+
+Allowed Moves
+-------------
+1) n → n - 1
+2) n → ceil(n / 2)
+3) n → ceil(n / 3)
+
+Constraints
+-----------
+1 ≤ N ≤ 10^9
+
+Reason for using unordered_map instead of vector
+------------------------------------------------
+If we try vector DP:
+
+vector<long long> dp(N+1);
+
+Memory needed:
+
+10^9 * 8 bytes ≈ 8 GB
+
+Which is too large.
+
+So we store only visited states in a hashmap.
+*/
+
+unordered_map<long long,long long> dp; 
+// stores computed results to avoid recomputation
+
+
+long long solve(long long n){
+
+    // Base case: already 1 soldier
+    if(n <= 1)
+        return 0;
+
+    // If result already computed, return it
+    if(dp.count(n))
+        return dp[n];
+
+    /*
+    Try all three operations
+    */
+
+    // Operation 1: reduce by 1
+    long long op1 = 1 + solve(n - 1);
+
+    // Operation 2: remove half → ceil(n/2)
+    // (n + 1) / 2 avoids floating point
+    long long op2 = 1 + solve((n + 1) / 2);
+
+    // Operation 3: remove two-thirds → ceil(n/3)
+    // (n + 2) / 3 avoids floating point
+    long long op3 = 1 + solve((n + 2) / 3);
+
+    // store minimum result
+    return dp[n] = min({op1, op2, op3});
+}
+
+
+int main(){
+
+    long long n;
+    cin >> n;
+
+    /*
+    Using long long instead of int
+    because N can be up to 10^9.
+    */
+
+    cout << solve(n);
+
+    return 0;
+}
